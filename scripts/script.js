@@ -1,74 +1,74 @@
-// for current date and time
-let currentDateE1 = $('#currentDate');
+// Current Date / Time
+let currentDateEl = $('#currentDate');
 let currentDate;
 let currentTime;
 
-// Set-To/get from local storage (time and text)
+// Set-To/Get-From Local Storage (Time and Text)
 let calEntryEventTime;
-let calEntryEventText;
+let calEntryEventTxt;
 let timeArr = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
-// button 
-let saveBtn = $('.savebtn');
+// Button
+let saveBtn = $('.saveBtn');
 
-// determine color 
-let caTimeBlock;
+// Determine Color
+let calTimeblock;
 let timerInterval;
 let timeblockID = $("textarea[id*='timeblock']");
 
-// call function to render date and events to the DOM & update colors 
+// Calls Functions to Render Date and Events to the DOM & Update Colors
 function init() {
     currentMomentDate();
     renderEvents();
-    setBGcolors();
+    setBGColors();
 };
 
-// gets current date and renders in jumbotron header
+// Gets Current Date and Renders in Jumbotron Header
 function currentMomentDate() {
     currentDate = moment().format('dddd, LL');
-    currentDateE1.text(currentDate);
+    currentDateEl.text(currentDate);
 };
 
-// renders events pulled from local storage to DOM 
+// Renders Events Pulled from Local Storage to DOM
 function renderEvents() {
-    for (let i = 0; i < timeArr.length; i++) {
+    for (let i = 0; i < timeArr.length; i++) { 
         $('[id^=timeblock-]').each(function (i, v) {
             $(v).val(localStorage.getItem(timeArr[i]));
         })
     }
 };
 
-// triggers click Handler for save buttons
+// Triggers Click Handler for Save Buttons
 saveBtn.on('click', saveButtonClickHandler);
 
-// when button is clicked, pulls corresponding Time and Date values
+// When Save Button Clicked, Pulls Corresponding Time and Date Values
 function saveButtonClickHandler(event) {
-    // keeps form from sending
+    // Keeps Form from Sending
     event.preventDefault();
-    // sets Value to Time assosciated with the clcked save button
+    // Sets Value to Time Associated with Clicked Save Button
     calEntryEventTime = $(this).attr('id').split('-')[1];
-    // sets values to the user's input text.
-    calEntryEventText = $(this).siblings('textarea[name^="timeblock"]').val().trim();
-    // calls function to stpre in local storage
+    // Sets Value to the User's Input Text
+    calEntryEventTxt = $(this).siblings('textarea[name^="timeblock"]').val().trim();
+    // Calls Function to Store in Local Storage
     storeEvents();
 };
 
-// stores time and text values to loxa storage where (time= key) and (user's input text=value)
-function setBGcolors() {
-    localStorage.setItem(calEntryEventTime, calEntryEventText);
+// Stores Time and Text Values to Local Storage where (Time = Key) and (User's Input Text = Value)
+function storeEvents() {
+    localStorage.setItem(calEntryEventTime, calEntryEventTxt);
 };
 
-// updates timeblock classes and colors as time progresses 
-function setBGcolors() {
-    // for each timeblock ID, 
+// Updates Timeblock Classes/Colors as Time Progresses
+function setBGColors() {
+    // For each timeblock ID, 
     timeblockID.each(function () {
-    // split it to display the time contained at the end of the ID, 
+    // Split it to display the time contained at the end of the ID, 
     calTimeBlock = $(this).attr('id').split('-')[1];
-    // and conver it to a moment.js format, and then an integer
+    // And convert it to a Moment.js format, then an integer
     calTimeBlock = parseInt(moment(calTimeBlock, 'H').format('H'));
-    // get moment.js time and format identically
+    // Get Moment.js Time & format identically
     currentTime = parseInt(moment().format('H'));
-
+    
     if (currentTime < calTimeBlock) {
         $(this).removeClass('past present');
         $(this).addClass('future');
@@ -84,24 +84,25 @@ function setBGcolors() {
     })
 };
 
-// updates date and time and colors once per minute on the minute
+// Updates Date/Time and Colors Once Per Minute On The Minute
 function setIntervalOnMinute() {
     var currentDateSeconds = new Date().getSeconds();
     if (currentDateSeconds == 0) {
         setInterval(currentMomentDate, 60000);
-        setInterval(setBGcolors, 60000);
+        setInterval(setBGColors, 60000);
     } else {
         setTimeout(function () {
             setIntervalOnMinute();
         }, (60 - currentDateSeconds) * 1000);
     }
     currentMomentDate();
-    setBGcolors();
+    setBGColors();
 };
 
 setIntervalOnMinute();
 
-// initializes page
+// Initializes Page
 init();
 
-// lastly: add media queries to upate viewing stle on mobile and small screens
+// TO DO: 
+// 2.) Add Media-Queries to update look on mobile/small screens.
